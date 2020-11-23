@@ -10,7 +10,8 @@ spec:
     spec:
       containers:
       - name: vegeta
-        image: k8s.gcr.io/loader:0.6
+        #image: k8s.gcr.io/loader:0.6
+        image: willxd/loader:0.6
         resources:
           requests:
             cpu: 100m

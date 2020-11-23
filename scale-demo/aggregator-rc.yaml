@@ -11,7 +11,8 @@ spec:
     spec:
       containers:
       - name: aggregator
-        image: k8s.gcr.io/aggregator:2015-11-10-34b976a
+        #image: k8s.gcr.io/aggregator:2015-11-10-34b976a
+        image: willxd/aggregator:1.0
         command:
         - /aggregator
         - -selector=run=vegeta

@@ -70,12 +70,20 @@ func (h *HTTPReporter) SetMetrics(metrics *vegeta.Metrics) {
 func main() {
 	flag.Parse()
 
+	fmt.Printf("Hola 1\n")
+
+	fmt.Printf("Host 1  %v\n", host)
+	fmt.Printf("Host 2  %v\n", *host)
+
 	var serviceIP string
 	ips, err := net.LookupIP(*host)
 	if err != nil {
 		fmt.Printf("Error looking up %s: %v\n", *host, err)
 		os.Exit(2)
 	}
+
+	fmt.Printf("Ips  %v\n", ips)
+
 	for _, ip := range ips {
 		ipv4 := ip.To4()
 		if ipv4 != nil {
@@ -83,6 +91,9 @@ func main() {
 			break
 		}
 	}
+
+	fmt.Printf("serviceIP  %v\n", serviceIP)
+
 	if len(serviceIP) == 0 {
 		fmt.Printf("Failed to find suitable IP address: %v", ips)
 		os.Exit(2)
@@ -92,6 +103,9 @@ func main() {
 	if *port != 80 {
 		host = fmt.Sprintf("%s:%d", host, *port)
 	}
+
+	fmt.Printf("host  %v\n", host)
+
 	var targets []vegeta.Target
 	for _, path := range strings.Split(*paths, ",") {
 		path = strings.TrimPrefix(path, "/")
@@ -100,6 +114,11 @@ func main() {
 			URL:    fmt.Sprintf("http://%s/%s", host, path),
 		})
 	}
+
+	fmt.Printf("Hey %v\n", targets)
+	fmt.Printf("rate 1 %v\n", rate)
+	fmt.Printf("duration 1 %v\n", duration)
+
 	targeter := vegeta.NewStaticTargeter(targets...)
 	attacker := vegeta.NewAttacker(vegeta.Workers(uint64(*workers)))
 
@@ -109,8 +128,13 @@ func main() {
 	for {
 		metrics := &vegeta.Metrics{}
 		for res := range attacker.Attack(targeter, uint64(*rate), *duration) {
+			fmt.Printf("Holi\n")
+			fmt.Printf("rate 2 %v\n", *rate)
+			fmt.Printf("duration 2 %v\n", *duration)
+
 			metrics.Add(res)
 		}
+		fmt.Printf("metrics %v\n", metrics)
 		metrics.Close()
 		reporter.SetMetrics(metrics)
 	}

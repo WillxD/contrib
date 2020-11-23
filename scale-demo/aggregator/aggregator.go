@@ -111,7 +111,13 @@ func loadData() {
 	} else {
 		labelSelector = labels.Everything()
 	}
-	pods, err := c.Pods(api.NamespaceDefault).List(api.ListOptions{
+
+	const (
+		MyCustomNamespace string = "scale-test"
+	)
+
+	//pods, err := c.Pods(api.NamespaceDefault).List(api.ListOptions{
+	pods, err := c.Pods(MyCustomNamespace).List(api.ListOptions{
 		LabelSelector: labelSelector,
 		FieldSelector: fields.Everything(),
 	})
@@ -122,6 +128,9 @@ func loadData() {
 	loadbots := []*api.Pod{}
 	for ix := range pods.Items {
 		pod := &pods.Items[ix]
+
+		fmt.Printf("Hola pod: %v\n", pod)
+
 		if pod.Status.PodIP == "" {
 			continue
 		}
@@ -138,6 +147,9 @@ func loadData() {
 			var data []byte
 			if *useIP {
 				url := "http://" + pod.Status.PodIP + ":8080/"
+
+				fmt.Printf("Test url: %v\n", url)
+
 				resp, err := http.Get(url)
 				if err != nil {
 					fmt.Printf("Error getting: %v\n", err)
